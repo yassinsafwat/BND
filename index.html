@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0e27" />
+  <title>Spider-Man date?</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: #0a0e27;
+      font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
+      overflow-x: hidden;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+
+    #web-bg {
+      position: fixed;
+      inset: -10%;
+      z-index: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent 0 42px, rgba(120,140,255,0.08) 42px 43px),
+        repeating-linear-gradient(90deg, transparent 0 42px, rgba(120,140,255,0.08) 42px 43px);
+      animation: drift 30s linear infinite;
+    }
+
+    @keyframes drift {
+      from { transform: translate(0, 0); }
+      to { transform: translate(42px, 42px); }
+    }
+
+    #glow {
+      position: fixed;
+      z-index: 0;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(500px, 92vw);
+      height: min(500px, 92vw);
+      background: radial-gradient(circle, rgba(224, 51, 47, 0.18) 0, transparent 70%);
+      pointer-events: none;
+    }
+
+    #stage {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding:
+        calc(24px + env(safe-area-inset-top))
+        calc(16px + env(safe-area-inset-right))
+        calc(24px + env(safe-area-inset-bottom))
+        calc(16px + env(safe-area-inset-left));
+      text-align: center;
+    }
+
+    .card {
+      animation: rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 440px;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(24px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .spider-icon {
+      width: clamp(72px, 18vw, 84px);
+      height: clamp(72px, 18vw, 84px);
+      margin-bottom: 10px;
+      filter: drop-shadow(0 4px 12px rgba(224, 51, 47, 0.4));
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(224, 51, 47, 0.15);
+      color: #ff8a85;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(224, 51, 47, 0.35);
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      color: #ffffff;
+      font-size: clamp(23px, 6.2vw, 36px);
+      font-weight: 800;
+      line-height: 1.25;
+      margin: 0 0 10px;
+      max-width: 420px;
+      letter-spacing: -0.01em;
+    }
+
+    h1 .accent {
+      color: #ff4b45;
+    }
+
+    p.sub {
+      color: #9aa5d1;
+      font-size: clamp(14px, 3.6vw, 17px);
+      margin: 0 0 34px;
+      max-width: 360px;
+      line-height: 1.5;
+    }
+
+    /* Buttons always sit side by side, even on the smallest screens.
+       Text wraps instead of getting clipped so the escalating "No" copy
+       never disappears. */
+    #btn-area {
+      width: 100%;
+      max-width: 420px;
+      min-height: 44px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      padding: 4px 2px 12px;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      transition:
+        transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+        font-size 0.22s ease,
+        padding 0.22s ease,
+        opacity 0.3s ease,
+        box-shadow 0.22s ease;
+      -webkit-user-select: none;
+      user-select: none;
+      min-height: 44px;
+      line-height: 1.25;
+    }
+
+    button:active {
+      transform: scale(0.94);
+    }
+
+    button:focus-visible {
+      outline: 3px solid rgba(255, 255, 255, 0.75);
+      outline-offset: 3px;
+    }
+
+    #yes-btn {
+      background: linear-gradient(135deg, #ff4b45, #a11712);
+      color: #fff;
+      font-size: 17px;
+      padding: 17px 28px;
+      box-shadow: 0 8px 24px rgba(224, 51, 47, 0.45), 0 0 0 0 rgba(255, 75, 69, 0.5);
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        box-shadow: 0 8px 24px rgba(224, 51, 47, 0.45), 0 0 0 0 rgba(255, 75, 69, 0.35);
+      }
+      50% {
+        box-shadow: 0 8px 24px rgba(224, 51, 47, 0.45), 0 0 0 10px rgba(255, 75, 69, 0);
+      }
+    }
+
+    #no-btn {
+      background: rgba(255, 255, 255, 0.06);
+      color: #b6bfe6;
+      font-size: 17px;
+      padding: 17px 28px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .mini {
+      color: #6d78a8;
+      font-size: 12px;
+      margin-top: 16px;
+    }
+
+    #success-screen {
+      display: none;
+    }
+
+    #success-screen.show {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    #success-screen h1 {
+      font-size: clamp(27px, 7.4vw, 42px);
+    }
+
+    .status {
+      margin-top: 22px;
+      font-size: 13px;
+      color: #7c88bf;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #6fcf97;
+    }
+
+    .dot.pending {
+      background: #e0a83a;
+      animation: blink 1s infinite;
+    }
+
+    .dot.fail {
+      background: #e0332f;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0.3; }
+    }
+
+    .confetti {
+      position: absolute;
+      top: -30px;
+      font-size: 20px;
+      animation: fall linear forwards;
+      will-change: transform;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0.15;
+      }
+    }
+
+    .hint {
+      color: #55609a;
+      font-size: 12.5px;
+      margin-top: 28px;
+    }
+
+    @media (max-width: 480px) {
+      #stage {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      #btn-area {
+        gap: 8px;
+      }
+
+      #yes-btn {
+        padding-left: 18px;
+        padding-right: 18px;
+        font-size: 15px;
+      }
+
+      #no-btn {
+        font-size: 13px;
+        padding: 12px 14px;
+      }
+
+      .badge {
+        margin-bottom: 14px;
+      }
+
+      p.sub {
+        margin-bottom: 24px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      h1 {
+        font-size: 22px;
+      }
+
+      .mini {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="web-bg"></div>
+  <div id="glow"></div>
+
+  <div id="stage">
+    <div class="card" id="question-screen">
+      <span class="badge">✨ A once in a lifetime offer ✨</span>
+
+      <svg class="spider-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="50" cy="55" r="22" fill="#e0332f" />
+        <circle cx="50" cy="30" r="13" fill="#e0332f" />
+        <path d="M50 30 L50 5 M50 30 L30 15 M50 30 L70 15 M50 30 L20 30 M50 30 L80 30" stroke="#0a0e27" stroke-width="2" fill="none" />
+        <path d="M50 55 L15 40 M50 55 L10 55 M50 55 L15 75 M50 55 L85 40 M50 55 L90 55 M50 55 L85 75" stroke="#0a0e27" stroke-width="2.5" fill="none" />
+        <path d="M42 26 Q50 32 58 26" stroke="#0a0e27" stroke-width="2" fill="none" />
+      </svg>
+
+      <h1>Will you go see <br><span class="accent">Spider-Man: Brand New Day</span> 🕷️<br>with me?</h1>
+      <p class="sub">Just you, me, popcorn 🍿, and a whole lot of web-slinging.</p>
+
+      <div id="btn-area">
+        <button id="yes-btn" type="button" aria-label="Yes, go to the movies">Yes 🕸️</button>
+        <button id="no-btn" type="button" aria-label="No, decline">No</button>
+      </div>
+
+      <p class="mini">tap a button, hero</p>
+    </div>
+
+    <div class="card" id="success-screen">
+      <svg class="spider-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="50" cy="50" r="30" fill="#e0332f" />
+        <path d="M35 45 Q50 60 65 45" stroke="#0a0e27" stroke-width="3" fill="none" stroke-linecap="round" />
+        <circle cx="40" cy="38" r="6" fill="#fff" />
+        <circle cx="60" cy="38" r="6" fill="#fff" />
+      </svg>
+      <h1>YESSS! 🎉<br>Let's swing to the movies!</h1>
+      <p class="sub">Can't wait. See you at the theater 🍿🕸️</p>
+      <div class="status" id="status-line">
+        <span class="dot pending" id="status-dot"></span>
+        <span id="status-text">Letting him know...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" onerror="window.__emailjsLoadFailed = true;"></script>
+
+  <script>
+    /*
+      ===== EmailJS setup =====
+      1. Create a free account at https://www.emailjs.com/
+      2. Add an Email Service (e.g. Gmail) -> copy the Service ID
+      3. Create an Email Template with variables like {{message}} -> copy the Template ID
+      4. Go to Account > General -> copy your Public Key
+      5. Paste all three values below.
+    */
+    const EMAILJS_PUBLIC_KEY = 'kA5WDnLOYEvHrM4a7';
+    const EMAILJS_SERVICE_ID = 'service_9uqfojt';
+    const EMAILJS_TEMPLATE_ID = 'template_bnv3y3d';
+
+    // IMPORTANT: never let EmailJS setup crash before the buttons are wired up.
+    // If the CDN script is slow/blocked (common on iOS Safari over cellular,
+    // Private Relay, or content blockers), this used to throw a ReferenceError
+    // and silently kill every listener defined below it.
+    try {
+      if (typeof emailjs !== 'undefined') {
+        emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+      } else {
+        window.__emailjsLoadFailed = true;
+      }
+    } catch (initErr) {
+      window.__emailjsLoadFailed = true;
+      console.error('EmailJS init failed:', initErr);
+    }
+
+    const noTexts = [
+      "No, Wait... 🕸️",
+      "Really? 😳",
+      "My spidey-sense says reconsider... 🕷️",
+      "Even Uncle Ben would want you to say yes 😇",
+      "That's not very heroic of you 🦸",
+      "With great power comes great yes-ability ⚡",
+      "Don't leave me hanging... 🕷️",
+      "Final swing before you decide 🕸️",
+      "You're tearing the multiverse apart 🌀",
+      "Not very friendly-neighborhood of you 🏙️",
+      "Have a heart, hero ❤️",
+      "Reconsider, true believer 📖",
+      "Is that your final answer? 🤔",
+      "You're breaking my heart 💔"
+    ];
+
+    const yesBtn = document.getElementById('yes-btn');
+    const noBtn = document.getElementById('no-btn');
+    const questionScreen = document.getElementById('question-screen');
+    const successScreen = document.getElementById('success-screen');
+    const statusDot = document.getElementById('status-dot');
+    const statusText = document.getElementById('status-text');
+
+    let step = 0;
+
+    function escalate() {
+      step = Math.min(step + 1, noTexts.length - 1);
+      noBtn.textContent = noTexts[step];
+
+      // Yes keeps growing every press. It's allowed to run past the
+      // screen edge — the button row scrolls horizontally so the rest
+      // of it is still reachable.
+      const growth = 1 + step * 0.13;
+      yesBtn.style.fontSize = (17 * growth) + 'px';
+      yesBtn.style.padding = `${17 * growth}px ${28 * growth}px`;
+
+      // No starts the same size as Yes and shrinks down each press.
+      const shrink = Math.max(1 - step * 0.055, 0.4);
+      noBtn.style.opacity = Math.max(1 - step * 0.04, 0.55);
+      noBtn.style.fontSize = (17 * shrink) + 'px';
+      noBtn.style.padding = `${17 * shrink}px ${28 * shrink}px`;
+    }
+
+    // Attach with a plain 'click' listener. iOS Safari fires synthetic click
+    // events fine on real <button> elements as long as nothing upstream threw
+    // an error and stopped the script (see the try/catch around emailjs.init
+    // above) — that was the actual cause of "buttons don't respond" on iPhone.
+    let noHandled = false;
+    noBtn.addEventListener('click', e => {
+      e.preventDefault();
+      if (noHandled) return; // guard against double-fire from click + touchend
+      noHandled = true;
+      escalate();
+      setTimeout(() => { noHandled = false; }, 50);
+    });
+
+    let yesHandled = false;
+    yesBtn.addEventListener('click', async e => {
+      e.preventDefault();
+      if (yesHandled) return;
+      yesHandled = true;
+      questionScreen.style.display = 'none';
+      successScreen.classList.add('show');
+      launchConfetti();
+      await sendNotification();
+    });
+
+    function launchConfetti() {
+      const emojis = ['✨', '🕸️', '❤️', '🍿', '🎉', '🕷️'];
+      for (let i = 0; i < 32; i++) {
+        setTimeout(() => {
+          const el = document.createElement('div');
+          el.className = 'confetti';
+          el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+          el.style.left = Math.random() * 100 + 'vw';
+          el.style.animationDuration = (2.5 + Math.random() * 2) + 's';
+          document.body.appendChild(el);
+          setTimeout(() => el.remove(), 5000);
+        }, i * 70);
+      }
+    }
+
+    async function sendEmailViaEmailJS() {
+      if (EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+        throw new Error('EmailJS is not configured yet. Fill in EMAILJS_PUBLIC_KEY, EMAILJS_SERVICE_ID, and EMAILJS_TEMPLATE_ID.');
+      }
+
+      if (typeof emailjs === 'undefined' || window.__emailjsLoadFailed) {
+        throw new Error('EmailJS SDK failed to load (network/CDN issue).');
+      }
+
+      return emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        subject: 'She said YES to Spider-Man: Brand New Day! 🕷️',
+        message: 'She just said YES! Go lock in the tickets. 🎉'
+      });
+    }
+
+    async function sendNotification() {
+      const maxAttempts = 3;
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+          statusDot.className = 'dot pending';
+          statusText.textContent = attempt === 1 ? 'Letting him know...' : 'Retrying...';
+          await sendEmailViaEmailJS();
+          statusDot.className = 'dot';
+          statusText.textContent = 'He has been notified';
+          return;
+        } catch (err) {
+          if (attempt === maxAttempts) {
+            statusDot.className = 'dot fail';
+            statusText.textContent = 'Notification failed to send';
+          } else {
+            await new Promise(r => setTimeout(r, 1200 * attempt));
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>
